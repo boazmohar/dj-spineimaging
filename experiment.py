@@ -6,36 +6,50 @@ schema = dj.schema('boazmohar_experiment', locals())
 
 
 @schema
-class Task(dj.Lookup):
+class FOV(dj.Manual):
     definition = """
-    # Type of tasks
-    task            : varchar(12)                  # task type
-    ----
-    task_description : varchar(4000)
+    -> animal.Subject
+    fov_id : smallint #
+    ---
+    stack_date  : date          # when it was imaged for reference
+    description : varchar(128)  # location in the craniotomy
     """
-    contents = [
-         ('audio delay', 'auditory delayed response task (2AFC)'),
-         ('audio mem', 'auditory working memory task'),
-         ('s1 stim', 'S1 photostimulation task (2AFC)'),
-         ('s1 delay', 'Somatosensory delayed response task (2AFC)')]
+
+
+@schema
+class SessionTypes(dj.Lookup):
+    definition = """
+    # Session types
+    session_type              : varchar(30)             # session type
+    """
+    contents = zip(['Stacks', 'MROI-SP', 'MROI-Manual', 'Spines', 'Cell-Body', 'Vision', 'Pole'])
 
 
 @schema
 class Session(dj.Manual):
     definition = """
-    -> animal.Subject
-    session : smallint 
+    -> FOV
+    run : smallint 
     ---
-    session_date  : date
+    date        : date
     -> lab.Person
     -> lab.Rig
     """
 
-    class Trial(dj.Part):
+    class SessionTypes(dj.Part):
         definition = """
+        # Session types
         -> Session
-        trial   : smallint
-        ---
-        start_time : decimal(9,3)  # (s)
-        end_time : decimal(9,3)  # (s)
+        -> SessionTypes
         """
+
+
+@schema
+class Trial(dj.Imported):
+    definition = """
+    -> Session
+    trial   : smallint
+    ---
+    start_time : decimal(9,3)  # (s)
+    end_time : decimal(9,3)  # (s)
+    """

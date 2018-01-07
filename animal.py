@@ -1,6 +1,6 @@
 import datajoint as dj
 
-schema = dj.schema('boazmohar_subjects', locals())
+schema = dj.schema('boazmohar_animal', locals())
 
 
 @schema
@@ -37,16 +37,6 @@ class GeneModification(dj.Lookup):
 
 
 @schema
-class User(dj.Lookup):
-    definition = """
-    # User (lab member)
-    username            : varchar(16)             #  database username
-    ----
-    full_name=''        : varchar(60)
-    """
-
-
-@schema
 class Subject(dj.Manual):
     definition = """
     subject_id          : int                     # institution animal ID
@@ -57,7 +47,7 @@ class Subject(dj.Manual):
     date_of_surgery     : date
     sex                 : enum('M','F','Unknown')
     
-    ->                  [nullable]              AnimalSource
+    ->  [nullable]   AnimalSource
     """
 
     class GeneModification(dj.Part):
@@ -66,11 +56,9 @@ class Subject(dj.Manual):
         -> Subject
         -> GeneModification
         """
-        # XXX: empty
 
     class Strain(dj.Part):
         definition = """
         -> Subject
         -> Strain
         """
-        # XXX: empty

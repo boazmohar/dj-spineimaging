@@ -12,10 +12,11 @@ class Person(dj.Manual):
     """
     contents = [('boazmohar', 'Boaz Mohar')]
 
+
 @schema
 class Rig(dj.Manual):
     definition = """
-    rig  : varchar(8)
+    rig  : varchar(16)
     ---
     rig_description : varchar(1024) 
     """
