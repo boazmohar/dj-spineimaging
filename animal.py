@@ -42,7 +42,6 @@ class Subject(dj.Manual):
     subject_id          : int                     # institution animal ID
     ---
     -> Species 
-    wr_number           : int                       # water restriction number
     date_of_birth       : date
     date_of_surgery     : date
     sex                 : enum('M','F','Unknown')
@@ -61,4 +60,32 @@ class Subject(dj.Manual):
         definition = """
         -> Subject
         -> Strain
+        """
+
+@schema
+class WaterRestriction(dj.Manual):
+    definition = """
+    -> Subject
+    water_restriction_number    : varchar(16)   # WR number
+    ---
+    wr_start_date               : date
+    wr_start_weight             : Decimal(2,3)
+    """
+
+
+@schema
+class Surgery(dj.Manual):
+    definition = """
+    -> Subject
+    surgery_id          : int                     # surgery number
+    ---
+    date_of_surgery     : date
+    
+    """
+
+    class VirusInjection(dj.Part):
+        definition = """
+        # Subject gene modifications
+        -> Surgery
+        injection_id : int
         """

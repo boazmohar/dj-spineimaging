@@ -50,6 +50,8 @@ class Trial(dj.Imported):
     -> Session
     trial   : smallint
     ---
-    start_time : decimal(9,3)  # (s)
-    end_time : decimal(9,3)  # (s)
+    filename : varchar(256)
+    timepoints : uint
+    start_frame : uint
+    end_frame : uint
     """
