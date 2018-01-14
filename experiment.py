@@ -1,5 +1,4 @@
 import datajoint as dj
-import animal
 import lab
 
 schema = dj.schema('boazmohar_experiment', locals())
@@ -8,7 +7,7 @@ schema = dj.schema('boazmohar_experiment', locals())
 @schema
 class FOV(dj.Manual):
     definition = """
-    -> animal.Subject
+    -> lab.Subject
     fov_id : smallint #
     ---
     stack_date  : date          # when it was imaged for reference
@@ -51,7 +50,7 @@ class Trial(dj.Imported):
     trial   : smallint
     ---
     filename : varchar(256)
-    timepoints : uint
-    start_frame : uint
-    end_frame : uint
+    timepoints : int unsigned
+    start_frame : int unsigned
+    end_frame : int unsigned
     """
