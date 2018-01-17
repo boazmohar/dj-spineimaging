@@ -6,17 +6,16 @@ schema = dj.schema('boazmohar_lab', locals())
 @schema
 class Person(dj.Manual):
     definition = """
-    username : varchar(12) 
+    username : varchar(24) 
     ----
-    fullname : varchar(60)
+    fullname : varchar(255)
     """
-    contents = [('boazmohar', 'Boaz Mohar')]
 
 
 @schema
 class Rig(dj.Manual):
     definition = """
-    rig  : varchar(16)
+    rig             : varchar(24)
     ---
     room            : varchar(20) # example 2w.342
     rig_description : varchar(1024) 
@@ -32,25 +31,11 @@ class AnimalSource(dj.Lookup):
 
 
 @schema
-class Species(dj.Lookup):
-    definition = """
-    species   : varchar(60)
-    """
-    contents = zip(['mus musculus'])
-
-
-@schema
-class Strain(dj.Manual):
-    definition = """
-    # Mouse strain
-    strain : varchar(30) # mouse strain
-    """
-
-
-@schema
 class GeneModification(dj.Manual):
     definition = """
     gene_modification   : varchar(60)
+    ---
+    description = ''         : varchar(256)
     """
 
 
@@ -60,9 +45,7 @@ class Subject(dj.Manual):
     subject_id          : int                     # institution animal ID
     ---
     cage_number         : int
-    -> Species 
     date_of_birth       : date
-    date_of_surgery     : date
     sex                 : enum('M','F','Unknown')
     ->  [nullable]   AnimalSource
     """
@@ -72,21 +55,33 @@ class Subject(dj.Manual):
         # Subject gene modifications
         -> Subject
         -> GeneModification
-        """
-
-    class Strain(dj.Part):
-        definition = """
-        -> Subject
-        -> Strain
+        ---
+        zygosity = 'Unknown' : enum('Het', 'Hom', 'Unknown')
+        type = 'Unknown'     : enum('Knock-in', 'Transgene', 'Unknown')
         """
 
 
 @schema
+class CompleteGenotype(dj.Computed):
+    # should be computed
+    definition = """
+    -> Subject
+    ---
+    complete_genotype : varchar(1000)
+    """
+
+    def make(self, key):
+        pass
+
+
+# do we really need this?
+@schema
 class WaterRestriction(dj.Manual):
     definition = """
     -> Subject
-    water_restriction_number    : varchar(16)   # WR number
     ---
+    water_restriction_number    : varchar(16)   # WR number
+    cage_number                 : int
     wr_start_date               : date
     wr_start_weight             : Decimal(6,3)
     """
@@ -115,26 +110,47 @@ class Virus(dj.Manual):
     -> VirusSource 
     -> Serotype
     -> Person
-    virus_name      : varchar(255)
-    titer           : Decimal(20,1)
+    virus_name      : varchar(256)
+    titer           : Decimal(20,1) # 
     order_date      : date
     remarks         : varchar(256)
     """
 
+    class Notes(dj.Part):
+        definition = """
+        # Notes for virus
+        -> Virus
+        note_id     : int
+        ---
+        note        : varchar(256)
+        """
+
 
 @schema
-class VirusReference(dj.Lookup):
+class SkullReference(dj.Lookup):
     definition = """
-    virus_reference   : varchar(60)
+    skull_reference   : varchar(60)
     """
-    contents = zip(['Bregma', 'lambda'])
+    contents = zip(['Bregma', 'Lambda'])
+
+
+@schema
+class Location(dj.Manual):
+    definition = """
+    location_name : varchar(60)
+    ---
+    -> SkullReference
+    ml_location     : Decimal(8,3) # um from ref left is positive
+    ap_location     : Decimal(8,3) # um from ref anterior is positive
+    dv_location     : Decimal(8,3) # um from dura dorsal is positive 
+    """
 
 
 @schema
 class Surgery(dj.Manual):
     definition = """
     -> Subject
-    surgery_id          : int                     # surgery number
+    surgery_id          : int      # surgery number
     ---
     -> Person
     start_time          : datetime # start time
@@ -149,13 +165,10 @@ class Surgery(dj.Manual):
         injection_id : int
         ---
         -> Virus
-        -> VirusReference
-        ml_location     : Decimal(8,3) # um from ref left is positive
-        ap_location     : Decimal(8,3) # um from ref anterior is positive
-        dv_location     : Decimal(8,3) # um from dura dorsal is positive
-        location_name   : varchar(60)
+        -> Location
         volume          : Decimal(10,3) # in nl
         dilution        : Decimal (10, 2) # 1 to how much
+        description     : varchar(256)
         """
 
     class Procedure(dj.Part):
@@ -163,12 +176,9 @@ class Surgery(dj.Manual):
         # Other things you did to the animal
         -> Surgery
         procedure_id : int
+        -> Location
         ---
-        description     : varchar(60)
-        ml_location     : Decimal(8,3) # um from ref left is positive
-        ap_location     : Decimal(8,3) # um from ref anterior is positive
-        dv_location     : Decimal(8,3) # um from dura dorsal is positive
-        location_name   : varchar(60)
+        description     : varchar(1000)
         """
 
 
