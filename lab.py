@@ -74,7 +74,6 @@ class CompleteGenotype(dj.Computed):
         pass
 
 
-# do we really need this?
 @schema
 class WaterRestriction(dj.Manual):
     definition = """
@@ -135,18 +134,6 @@ class SkullReference(dj.Lookup):
 
 
 @schema
-class Location(dj.Manual):
-    definition = """
-    location_name : varchar(60)
-    ---
-    -> SkullReference
-    ml_location     : Decimal(8,3) # um from ref left is positive
-    ap_location     : Decimal(8,3) # um from ref anterior is positive
-    dv_location     : Decimal(8,3) # um from dura dorsal is positive 
-    """
-
-
-@schema
 class Surgery(dj.Manual):
     definition = """
     -> Subject
@@ -165,7 +152,10 @@ class Surgery(dj.Manual):
         injection_id : int
         ---
         -> Virus
-        -> Location
+        -> SkullReference
+        ml_location     : Decimal(8,3) # um from ref left is positive
+        ap_location     : Decimal(8,3) # um from ref anterior is positive
+        dv_location     : Decimal(8,3) # um from dura dorsal is positive 
         volume          : Decimal(10,3) # in nl
         dilution        : Decimal (10, 2) # 1 to how much
         description     : varchar(256)
@@ -176,8 +166,11 @@ class Surgery(dj.Manual):
         # Other things you did to the animal
         -> Surgery
         procedure_id : int
-        -> Location
         ---
+        -> SkullReference='Bregma'
+        ml_location=0     : Decimal(8,3) # um from ref left is positive
+        ap_location=0     : Decimal(8,3) # um from ref anterior is positive
+        dv_location=0     : Decimal(8,3) # um from dura dorsal is positive 
         description     : varchar(1000)
         """
 
