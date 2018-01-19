@@ -19,20 +19,36 @@ class FOV(dj.Manual):
 class SessionTypes(dj.Lookup):
     definition = """
     # Session types
-    session_type              : varchar(30)             # session type
+    session_type : varchar(30)             # session type
+    ---    
     """
-    contents = zip(['Stacks', 'MROI-SP', 'MROI-Manual', 'Spines', 'Cell-Body', 'Vision', 'Pole'])
+
+    class Filename(dj.Part):
+        definition = """
+        # required files
+        -> SessionTypes
+        filename : varchar(256)
+        """
+
+    # contents = zip(['Stacks', 'MROI-SP', 'MROI-Manual', 'Spines', 'Cell-Body', 'Vision', 'Pole'])
 
 
 @schema
 class Session(dj.Manual):
     definition = """
     -> FOV
-    run : smallint 
+    session_id                  : smallint unsigned # running session id
     ---
-    date        : date
-    -> lab.Person
+    -> lab.Person = 'boazmohar'
     -> lab.Rig
+    date = CURRENT_TIMESTAMP    : timestamp         # start date and time
+    run = 1                     : int unsigned      # run number
+    excitation_wavelength = 960 : int               # in nm
+    power                       : decimal(6,3)      # in percent
+    anesthesia = 'None'         : enum('None','ISO')
+    pitch = 0                   : decimal(6,3)
+    roll = 0                    : decimal(6,3)
+    comments = "None"           : varchar(256)
     """
 
     class SessionTypes(dj.Part):
