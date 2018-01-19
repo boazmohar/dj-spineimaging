@@ -16,6 +16,18 @@ class FOV(dj.Manual):
 
 
 @schema
+class Tracing(dj.Manual):
+    definition = """
+    -> FOV
+    tracing_id              : smallint unsigned # running cell id
+    ---
+    tracing_type = 'Cell'   : enum('Cell', 'Cell bodies', 'Other')
+    swc_name                : varchar(256)      # name of reconstruction swc
+    comments                : varchar(1024)     # tuning, other remarks
+    """
+
+
+@schema
 class SessionTypes(dj.Lookup):
     definition = """
     # Session types
@@ -40,7 +52,8 @@ class Session(dj.Manual):
     session_id                  : smallint unsigned # running session id
     ---
     -> lab.Person = 'boazmohar'
-    -> lab.Rig
+    -> lab.Rig = 'spine_2p'
+    -> [nullable] Tracing
     date = CURRENT_TIMESTAMP    : timestamp         # start date and time
     run = 1                     : int unsigned      # run number
     excitation_wavelength = 960 : int               # in nm
