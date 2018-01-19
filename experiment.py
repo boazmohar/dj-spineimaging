@@ -23,14 +23,12 @@ class SessionTypes(dj.Lookup):
     ---    
     """
 
-    class Filename(dj.Part):
+    class Files(dj.Part):
         definition = """
         # required files
         -> SessionTypes
         filename : varchar(256)
         """
-
-    # contents = zip(['Stacks', 'MROI-SP', 'MROI-Manual', 'Spines', 'Cell-Body', 'Vision', 'Pole'])
 
 
 @schema
