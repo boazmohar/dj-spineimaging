@@ -19,10 +19,9 @@ class FOV(dj.Manual):
 class Tracing(dj.Manual):
     definition = """
     -> FOV
-    tracing_id              : smallint unsigned # running cell id
+    tracing_name              : varchar(32) # name of reconstruction swc
     ---
     tracing_type = 'Cell'   : enum('Cell', 'Cell bodies', 'Other')
-    swc_name                : varchar(256)      # name of reconstruction swc
     comments                : varchar(1024)     # tuning, other remarks
     """
 
