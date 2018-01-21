@@ -19,7 +19,7 @@ class FOV(dj.Manual):
 class Tracing(dj.Manual):
     definition = """
     -> FOV
-    tracing_name              : varchar(32) # name of reconstruction swc
+    tracing_name            : varchar(32) # name of reconstruction swc
     ---
     tracing_type = 'Cell'   : enum('Cell', 'Cell bodies', 'Other')
     comments                : varchar(1024)     # tuning, other remarks
@@ -68,6 +68,14 @@ class Session(dj.Manual):
         -> SessionTypes
         """
 
+
+@schema
+class Registration(dj.Manual):
+    definition = """
+        -> Session
+        trial   : smallint
+        ---
+        filename : varchar(256)
 
 @schema
 class Trial(dj.Imported):
