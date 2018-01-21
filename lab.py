@@ -42,12 +42,13 @@ class GeneModification(dj.Manual):
 @schema
 class Subject(dj.Manual):
     definition = """
-    subject_id          : int                     # institution animal ID
+    subject_id          : int   # institution 6 digit animal ID
     ---
-    cage_number         : int
-    date_of_birth       : date
+    -> [nullable] Person        # person responsible for the animal
+    cage_number         : int   # institution 6 digit animal ID
+    date_of_birth       : date  # format: yyyy-mm-dd
     sex                 : enum('M','F','Unknown')
-    ->  [nullable]   AnimalSource
+    -> [nullable] AnimalSource  # where was the animal ordered from
     """
 
     class GeneModification(dj.Part):
