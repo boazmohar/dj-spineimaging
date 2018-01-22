@@ -72,10 +72,27 @@ class Session(dj.Manual):
 @schema
 class Registration(dj.Manual):
     definition = """
+    registration_id : smallint
+    """
+
+    class Sessions(dj.Part):
+        definition = """
+        # Sessions to register together
+        -> Registration
         -> Session
-        trial   : smallint
-        ---
-        filename : varchar(256)
+        """
+
+
+@schema
+class Step1(dj.Computed):
+    definition = """
+    -> Registration
+    """
+
+    def make(self, key, sc):
+        print(key)
+        print(sc.defaultParallelism)
+
 
 @schema
 class Trial(dj.Imported):
